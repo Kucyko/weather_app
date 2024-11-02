@@ -79,6 +79,6 @@ p, h1, h2, h3, h4, h5, h6 {
 .App {
   font-family: "Proxima Nova", "sans-serif";
   text-align: center;
-  min-height: 1400px;
-  background-color: #088f8f;
+  min-height: 900px;
+  background: linear-gradient(45deg, #47BFDF, #4A91FF);
 }

@@ -11,9 +11,6 @@ const App = () => {
         <Provider store={store}>
             <Router>
                 <div className="App">
-                    <header>
-                        <h1>Weather App</h1>
-                    </header>
                     <Routes>
                         <Route path="/" element={<Home />} />
                         <Route path="/details" element={<Details />} />
