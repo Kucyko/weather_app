@@ -5,6 +5,7 @@
   font-size: 42px;
 }
 
+
 .search-bar {
   display: flex;
   flex-direction: row;
@@ -54,9 +55,11 @@
   font-size: 92px;
 }
 
+
 .details-temp span {
   font-size: 52px;
 }
+
 
 .text-container {
   display: flex;

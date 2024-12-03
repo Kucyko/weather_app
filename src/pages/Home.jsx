@@ -31,11 +31,11 @@ export function Home() {
     search("Wrocław");
   },[])
 
-
+export function Home() {
     return (
       <div>
         <div className="header-container">
-          <div className='search-bar'>
+           <div className='search-bar'>
             <input ref={inputRef} type='text' placeholder='Search'/>
             <img src={search_icon} className='search-icon' onClick={()=>search(inputRef.current.value)}/>
           </div>
