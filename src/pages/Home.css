@@ -5,6 +5,34 @@
   font-size: 42px;
 }
 
+.disclaimer {
+  color: white;
+  padding-top: 10px;
+}
+
+.disclaimer.inactive {
+  display: none;
+}
+
+.errormes {
+  display: none;
+}
+
+.errormes.active {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: red;
+}
+
+.content {
+  display: none;
+}
+
+.content.active {
+  display: flex;
+  flex-direction: column;
+}
 
 .search-bar {
   display: flex;
