@@ -1,11 +1,44 @@
 import './Home.css';
 import wheater_icon from '../assets/images/clear-day.png'
 import prognosis_icon from '../assets/images/clear-day.png'
+import search_icon from '../assets/images/search.svg'
+import { search } from '../functions/index.jsx';
+import { useEffect, useState, useRef } from 'react';
+
+export function Home() {
+  const inputRef = useRef()
+  const [weatherData, setWeatherData] = useState(false);
+  async function search(city){
+    try {
+      const url = 'https://api.openweathermap.org/data/2.5/weather?q=' + city + '&appid=' + import.meta.env.VITE_APP_ID + '&units=metric';
+      const response = await fetch(url);
+      const data = await response.json();
+      console.log(data);
+      setWeatherData({
+        humidity: data.main.humidity,
+        windSpeed: data.wind.speed,
+        temperature: Math.floor(data.main.temp),
+        location: data.name,
+        icon: data.weather[0].icon
+      })
+    }catch (error) {
+
+    }
+
+  }
+
+  useEffect(()=>{
+    search("Wrocław");
+  },[])
 
 export function Home() {
     return (
       <div>
         <div className="header-container">
+           <div className='search-bar'>
+            <input ref={inputRef} type='text' placeholder='Search'/>
+            <img src={search_icon} className='search-icon' onClick={()=>search(inputRef.current.value)}/>
+          </div>
           <h1 className="header">Wrocław</h1>
         </div>
         <div className='icon-container'>
@@ -13,7 +46,7 @@ export function Home() {
         </div>
         <div className='details-container'>
           <h2 className='details-date'>Thursday, 12 November 2025</h2>
-          <h2 className='details-temp'>24</h2>
+          <h2 className='details-temp'>{weatherData.temperature}<span>°C</span></h2>
           <div className='text-container'>
             <h3 className='wind-text'>
               Wind
