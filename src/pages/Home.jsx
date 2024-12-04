@@ -2,16 +2,29 @@ import './Home.css';
 
 import search_icon from '/images/search.svg'
 import { useEffect, useState, useRef } from 'react';
+import Dropdown from '../functions/dropdown.jsx';
 
 export function Home() {
   const inputRef = useRef()
   const [weatherData, setWeatherData] = useState(false);
+  const [selectedOption, setSelectedOption] = useState('metric');
+  const [windText, setWindText] = useState('');
+  const [tempText, setTempText] = useState('');
   let [dailyForecast, setDailyForecast] = useState([]);
 
   async function search(city){
     try {
-      console.log(dailyForecast);
-      const url = 'https://api.openweathermap.org/data/2.5/weather?q=' + city + '&appid=' + import.meta.env.VITE_APP_ID + '&units=metric';
+      let url
+      console.log(selectedOption)
+      if (selectedOption === 'metric') {
+        url = 'https://api.openweathermap.org/data/2.5/weather?q=' + city + '&appid=' + import.meta.env.VITE_APP_ID + '&units=metric';
+        setWindText('km/h')
+        setTempText('°C')
+      }else {
+        url= 'https://api.openweathermap.org/data/2.5/weather?q=' + city + '&appid=' + import.meta.env.VITE_APP_ID + '&units=imperial';
+        setWindText('mil/h')
+        setTempText('°F')
+      }
       const response = await fetch(url);
       const data = await response.json();
       console.log(data);
@@ -25,7 +38,12 @@ export function Home() {
         icon: '/images/'+ data.weather[0].icon + '.png',
       })
 
-      const url2 = 'https://api.openweathermap.org/data/2.5/forecast?q=' + city + '&appid=' + import.meta.env.VITE_APP_ID + '&units=metric';
+      let url2 = ''
+      if (selectedOption === 'metric') {
+        url2 = 'https://api.openweathermap.org/data/2.5/forecast?q=' + city + '&appid=' + import.meta.env.VITE_APP_ID + '&units=metric';
+      }else {
+        url2 = 'https://api.openweathermap.org/data/2.5/forecast?q=' + city + '&appid=' + import.meta.env.VITE_APP_ID + '&units=imperial';
+      }
       const response2 = await fetch(url2);
       const data2 = await response2.json();
       setDailyForecast(dailyForecast = []);
@@ -62,6 +80,9 @@ export function Home() {
     }
   }
 
+  const handleOptionChange = (value) => {
+    setSelectedOption(value);
+  };
 
 
   //Date calculation
@@ -75,6 +96,7 @@ export function Home() {
     <div>
       <div className="header-container">
         <div className='search-bar'>
+          <Dropdown onOptionChange={handleOptionChange} />
           <input ref={inputRef} type='text' placeholder='Search'/>
           <img src={search_icon} className='search-icon'
                onClick={() => search(inputRef.current.value)}/>
@@ -89,14 +111,14 @@ export function Home() {
       </div>
       <div className='details-container'>
         <h2 className='details-date'>{currentDate}</h2>
-        <h2 className='details-temp'>{weatherData.temperature}<span>°C</span>
+        <h2 className='details-temp'>{weatherData.temperature}<span>{tempText}</span>
         </h2>
         <div className='text-container'>
           <h3 className='wind-text'>
             Wind
           </h3>
           <h3 className='wind-number'>
-            {weatherData.windSpeed} Km/h
+            {weatherData.windSpeed} {windText}
           </h3>
         </div>
         <div className='text-container'>
@@ -124,7 +146,7 @@ export function Home() {
           {dailyForecast[1] ? (
             <>
               <img src={dailyForecast[1].icon} alt="Weather icon" className="prognosis-icon" />
-              <h2 className="day-temp">{dailyForecast[1].temperature}°C</h2>
+              <h2 className="day-temp">{dailyForecast[1].temperature}{tempText}</h2>
             </>
           ) : (
             <h2>Loading...</h2>
@@ -137,7 +159,7 @@ export function Home() {
           {dailyForecast[2] ? (
             <>
               <img src={dailyForecast[2].icon} alt="Weather icon" className="prognosis-icon" />
-              <h2 className="day-temp">{dailyForecast[2].temperature}°C</h2>
+              <h2 className="day-temp">{dailyForecast[2].temperature}{tempText}</h2>
             </>
           ) : (
             <h2>Loading...</h2>
@@ -150,7 +172,7 @@ export function Home() {
           {dailyForecast[3] ? (
             <>
               <img src={dailyForecast[3].icon} alt="Weather icon" className="prognosis-icon" />
-              <h2 className="day-temp">{dailyForecast[3].temperature}°C</h2>
+              <h2 className="day-temp">{dailyForecast[3].temperature}{tempText}</h2>
             </>
           ) : (
             <h2>Loading...</h2>
@@ -163,7 +185,7 @@ export function Home() {
           {dailyForecast[4] ? (
             <>
               <img src={dailyForecast[4].icon} alt="Weather icon" className="prognosis-icon" />
-              <h2 className="day-temp">{dailyForecast[4].temperature}°C</h2>
+              <h2 className="day-temp">{dailyForecast[4].temperature}{tempText}</h2>
             </>
           ) : (
             <h2>Loading...</h2>
