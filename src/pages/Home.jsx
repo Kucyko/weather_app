@@ -2,16 +2,30 @@ import './Home.css';
 
 import search_icon from '/images/search.svg'
 import { useEffect, useState, useRef } from 'react';
+import Dropdown from '../functions/dropdown.jsx';
+import { useNavigate } from 'react-router-dom';
+import { useAppContext } from '../AppContext';
 
 export function Home() {
   const inputRef = useRef()
+  const { selectedOption } = useAppContext();
   const [weatherData, setWeatherData] = useState(false);
+  const [windText, setWindText] = useState('');
+  const [tempText, setTempText] = useState('');
   let [dailyForecast, setDailyForecast] = useState([]);
 
   async function search(city){
     try {
-      console.log(dailyForecast);
-      const url = 'https://api.openweathermap.org/data/2.5/weather?q=' + city + '&appid=' + import.meta.env.VITE_APP_ID + '&units=metric';
+      let url
+      if (selectedOption === 'metric') {
+        url = 'https://api.openweathermap.org/data/2.5/weather?q=' + city + '&appid=' + import.meta.env.VITE_APP_ID + '&units=metric';
+        setWindText('km/h')
+        setTempText('°C')
+      }else {
+        url= 'https://api.openweathermap.org/data/2.5/weather?q=' + city + '&appid=' + import.meta.env.VITE_APP_ID + '&units=imperial';
+        setWindText('mil/h')
+        setTempText('°F')
+      }
       const response = await fetch(url);
       const data = await response.json();
       console.log(data);
@@ -25,7 +39,12 @@ export function Home() {
         icon: '/images/'+ data.weather[0].icon + '.png',
       })
 
-      const url2 = 'https://api.openweathermap.org/data/2.5/forecast?q=' + city + '&appid=' + import.meta.env.VITE_APP_ID + '&units=metric';
+      let url2 = ''
+      if (selectedOption === 'metric') {
+        url2 = 'https://api.openweathermap.org/data/2.5/forecast?q=' + city + '&appid=' + import.meta.env.VITE_APP_ID + '&units=metric';
+      }else {
+        url2 = 'https://api.openweathermap.org/data/2.5/forecast?q=' + city + '&appid=' + import.meta.env.VITE_APP_ID + '&units=imperial';
+      }
       const response2 = await fetch(url2);
       const data2 = await response2.json();
       setDailyForecast(dailyForecast = []);
@@ -45,7 +64,7 @@ export function Home() {
 
       setDailyForecast(dailyForecast);
 
-      // Przykładowy output prognozy w konsoli
+
       console.log(dailyForecast);
       if (data.name !== '') {
         const activatecontent = document.querySelector('.content');
@@ -62,6 +81,15 @@ export function Home() {
     }
   }
 
+  const handleOptionChange = (value) => {
+    setSelectedOption(value);
+  };
+
+  const navigate = useNavigate();
+
+  const goToSettings = () => {
+    navigate('/settings');
+  };
 
 
   //Date calculation
@@ -74,29 +102,34 @@ export function Home() {
   return (
     <div>
       <div className="header-container">
-        <div className='search-bar'>
-          <input ref={inputRef} type='text' placeholder='Search'/>
-          <img src={search_icon} className='search-icon'
+        <div className="pages-conteiner">
+          <button className="button-pages" onClick={goToSettings}>Settings
+          </button>
+        </div>
+        <div className="search-bar">
+          <input ref={inputRef} type="text" placeholder="Search"/>
+          <img src={search_icon} className="search-icon"
                onClick={() => search(inputRef.current.value)}/>
         </div>
-        <h2 className='disclaimer'>Please type name of the city</h2>
-        <h2 className='errormes'>Error while getting city name. Please try again</h2>
+        <h2 className="disclaimer">Please type name of the city</h2>
+        <h2 className="errormes">Error while getting city name. Please try
+          again</h2>
       </div>
-        <div className='content'>
+      <div className="content">
         <h1 className="header">{weatherData.location}</h1>
-      <div className='icon-container'>
+        <div className="icon-container">
         <img className='icon' src={weatherData.icon}/>
       </div>
       <div className='details-container'>
         <h2 className='details-date'>{currentDate}</h2>
-        <h2 className='details-temp'>{weatherData.temperature}<span>°C</span>
+        <h2 className='details-temp'>{weatherData.temperature}<span>{tempText}</span>
         </h2>
         <div className='text-container'>
           <h3 className='wind-text'>
             Wind
           </h3>
           <h3 className='wind-number'>
-            {weatherData.windSpeed} Km/h
+            {weatherData.windSpeed} {windText}
           </h3>
         </div>
         <div className='text-container'>
@@ -124,7 +157,7 @@ export function Home() {
           {dailyForecast[1] ? (
             <>
               <img src={dailyForecast[1].icon} alt="Weather icon" className="prognosis-icon" />
-              <h2 className="day-temp">{dailyForecast[1].temperature}°C</h2>
+              <h2 className="day-temp">{dailyForecast[1].temperature}{tempText}</h2>
             </>
           ) : (
             <h2>Loading...</h2>
@@ -137,7 +170,7 @@ export function Home() {
           {dailyForecast[2] ? (
             <>
               <img src={dailyForecast[2].icon} alt="Weather icon" className="prognosis-icon" />
-              <h2 className="day-temp">{dailyForecast[2].temperature}°C</h2>
+              <h2 className="day-temp">{dailyForecast[2].temperature}{tempText}</h2>
             </>
           ) : (
             <h2>Loading...</h2>
@@ -150,7 +183,7 @@ export function Home() {
           {dailyForecast[3] ? (
             <>
               <img src={dailyForecast[3].icon} alt="Weather icon" className="prognosis-icon" />
-              <h2 className="day-temp">{dailyForecast[3].temperature}°C</h2>
+              <h2 className="day-temp">{dailyForecast[3].temperature}{tempText}</h2>
             </>
           ) : (
             <h2>Loading...</h2>
@@ -163,7 +196,7 @@ export function Home() {
           {dailyForecast[4] ? (
             <>
               <img src={dailyForecast[4].icon} alt="Weather icon" className="prognosis-icon" />
-              <h2 className="day-temp">{dailyForecast[4].temperature}°C</h2>
+              <h2 className="day-temp">{dailyForecast[4].temperature}{tempText}</h2>
             </>
           ) : (
             <h2>Loading...</h2>
