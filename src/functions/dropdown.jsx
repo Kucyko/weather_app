@@ -1,24 +1,20 @@
-import React, { useState } from 'react';
-import './dropdown.css'
+import React from 'react';
+import './dropdown.css';
 
-function Dropdown({ onOptionChange }) {
+function Dropdown({ selectedOption, onOptionChange }) {
   const options = [
     { label: 'Metric', value: 'metric' },
-    { label: 'Imperial', value: 'nonmetric' },
+    { label: 'Imperial', value: 'imperial' },
   ];
 
-  const [value, setValue] = useState('metric');
-
   const handleChange = (event) => {
-    const selectedValue = event.target.value;
-    setValue(selectedValue);
-    onOptionChange(selectedValue);
+    onOptionChange(event.target.value);
   };
 
   return (
     <div>
       <label>
-        <select className='dropdown' value={value} onChange={handleChange}>
+        <select className="dropdown" value={selectedOption} onChange={handleChange}>
           {options.map((option) => (
             <option key={option.value} value={option.value}>
               {option.label}

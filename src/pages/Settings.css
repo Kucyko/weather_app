@@ -1,0 +1,35 @@
+.title-container {
+  display: flex;
+  flex-direction: column-reverse;
+  justify-content: center;
+  align-items: center;
+  color: white;
+}
+
+.button-back {
+  color: white;
+  border-radius: 15px;
+  background: transparent;
+  padding-top: 2px;
+  padding-left: 10px;
+  padding-right: 10px;
+  border-style: solid;
+  border-width: 2px;
+  border-color: white;
+  font-weight: bold;
+  margin-top: 10px;
+  margin-bottom: 30px;
+}
+
+.button-back:hover {
+  background: white;
+  color: black
+}
+
+.disclaimer {
+  padding: 0;
+}
+
+.setting-container {
+  color:white;
+}

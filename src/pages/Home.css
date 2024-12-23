@@ -25,6 +25,34 @@
   color: red;
 }
 
+.pages-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+
+.button-pages {
+  color: white;
+  border-radius: 15px;
+  background: transparent;
+  padding-top: 2px;
+  padding-left: 10px;
+  padding-right: 10px;
+  border-style: solid;
+  border-width: 2px;
+  border-color: white;
+  font-weight: bold;
+  margin-top: 10px;
+  margin-bottom: 30px;
+  text-transform: uppercase;
+}
+
+.button-pages:hover {
+  background: white;
+  color: black
+}
+
 .content {
   display: none;
 }

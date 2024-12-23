@@ -3,11 +3,13 @@ import './Home.css';
 import search_icon from '/images/search.svg'
 import { useEffect, useState, useRef } from 'react';
 import Dropdown from '../functions/dropdown.jsx';
+import { useNavigate } from 'react-router-dom';
+import { useAppContext } from '../AppContext';
 
 export function Home() {
   const inputRef = useRef()
+  const { selectedOption } = useAppContext();
   const [weatherData, setWeatherData] = useState(false);
-  const [selectedOption, setSelectedOption] = useState('metric');
   const [windText, setWindText] = useState('');
   const [tempText, setTempText] = useState('');
   let [dailyForecast, setDailyForecast] = useState([]);
@@ -15,7 +17,6 @@ export function Home() {
   async function search(city){
     try {
       let url
-      console.log(selectedOption)
       if (selectedOption === 'metric') {
         url = 'https://api.openweathermap.org/data/2.5/weather?q=' + city + '&appid=' + import.meta.env.VITE_APP_ID + '&units=metric';
         setWindText('km/h')
@@ -63,7 +64,7 @@ export function Home() {
 
       setDailyForecast(dailyForecast);
 
-      // Przykładowy output prognozy w konsoli
+
       console.log(dailyForecast);
       if (data.name !== '') {
         const activatecontent = document.querySelector('.content');
@@ -84,6 +85,12 @@ export function Home() {
     setSelectedOption(value);
   };
 
+  const navigate = useNavigate();
+
+  const goToSettings = () => {
+    navigate('/settings');
+  };
+
 
   //Date calculation
   const today = new Date();
@@ -95,18 +102,22 @@ export function Home() {
   return (
     <div>
       <div className="header-container">
-        <div className='search-bar'>
-          <Dropdown onOptionChange={handleOptionChange} />
-          <input ref={inputRef} type='text' placeholder='Search'/>
-          <img src={search_icon} className='search-icon'
+        <div className="pages-conteiner">
+          <button className="button-pages" onClick={goToSettings}>Settings
+          </button>
+        </div>
+        <div className="search-bar">
+          <input ref={inputRef} type="text" placeholder="Search"/>
+          <img src={search_icon} className="search-icon"
                onClick={() => search(inputRef.current.value)}/>
         </div>
-        <h2 className='disclaimer'>Please type name of the city</h2>
-        <h2 className='errormes'>Error while getting city name. Please try again</h2>
+        <h2 className="disclaimer">Please type name of the city</h2>
+        <h2 className="errormes">Error while getting city name. Please try
+          again</h2>
       </div>
-        <div className='content'>
+      <div className="content">
         <h1 className="header">{weatherData.location}</h1>
-      <div className='icon-container'>
+        <div className="icon-container">
         <img className='icon' src={weatherData.icon}/>
       </div>
       <div className='details-container'>
