@@ -4,15 +4,22 @@ import search_icon from '/images/search.svg'
 import { useEffect, useState, useRef } from 'react';
 import Dropdown from '../functions/dropdown.jsx';
 import { useNavigate } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import { useAppContext } from '../AppContext';
+import '@fortawesome/fontawesome-free/css/all.min.css';
+
 
 export function Home() {
   const inputRef = useRef()
+  const location = useLocation();
   const { selectedOption } = useAppContext();
+  const { globalFav, setGlobalFav } = useAppContext();
+  const [buttonFavClass, setButtonFavClass] = useState('');
   const [weatherData, setWeatherData] = useState(false);
   const [windText, setWindText] = useState('');
   const [tempText, setTempText] = useState('');
   let [dailyForecast, setDailyForecast] = useState([]);
+
 
   async function search(city){
     try {
@@ -64,6 +71,13 @@ export function Home() {
 
       setDailyForecast(dailyForecast);
 
+      if (globalFav.includes(city)) {
+        setButtonFavClass('fa-solid fa-heart');
+      } else {
+        setButtonFavClass('fa-regular fa-heart');
+      }
+
+
 
       console.log(dailyForecast);
       if (data.name !== '') {
@@ -84,11 +98,29 @@ export function Home() {
   const handleOptionChange = (value) => {
     setSelectedOption(value);
   };
+  const toggleItem = (item) => {
+    if (globalFav.includes(item)) {
+      setGlobalFav((prevFav) => prevFav.filter((i) => i !== item));
+      setButtonFavClass('fa-regular fa-heart');
+    } else {
+      setGlobalFav((prevFav) => [...prevFav, item]);
+      setButtonFavClass('fa-solid fa-heart');
+    }
+  };
+
+  useEffect(() => {
+    if (location.state?.city) {
+      search(location.state.city);
+    }
+  }, [location.state]);
 
   const navigate = useNavigate();
 
   const goToSettings = () => {
     navigate('/settings');
+  };
+    const goToFavourites = () => {
+    navigate('/favourites');
   };
 
 
@@ -102,8 +134,10 @@ export function Home() {
   return (
     <div>
       <div className="header-container">
-        <div className="pages-conteiner">
+        <div className="pages-container">
           <button className="button-pages" onClick={goToSettings}>Settings
+          </button>
+          <button className="button-pages" onClick={goToFavourites}>Favourites
           </button>
         </div>
         <div className="search-bar">
@@ -116,94 +150,106 @@ export function Home() {
           again</h2>
       </div>
       <div className="content">
-        <h1 className="header">{weatherData.location}</h1>
+        <div className={'name-container'}>
+          <h1 className="header">{weatherData.location}</h1>
+          <i className={buttonFavClass} onClick={() => toggleItem(weatherData.location)}></i>
+        </div>
         <div className="icon-container">
-        <img className='icon' src={weatherData.icon}/>
+          <img className="icon" src={weatherData.icon}/>
+        </div>
+        <div className="details-container">
+          <h2 className="details-date">{currentDate}</h2>
+          <h2
+            className="details-temp">{weatherData.temperature}<span>{tempText}</span>
+          </h2>
+          <div className='text-container'>
+            <h3 className='wind-text'>
+              Wind
+            </h3>
+            <h3 className='wind-number'>
+              {weatherData.windSpeed} {windText}
+            </h3>
+          </div>
+          <div className='text-container'>
+            <h3 className='rain-text'>
+              Rain
+            </h3>
+            <h3 className='rain-number'>
+              {weatherData.humidity}% || {weatherData.rain} mm/h
+            </h3>
+          </div>
+          <div className='text-container'>
+            <h3 className='clouds-text'>
+              Clouds
+            </h3>
+            <h3 className='clouds-number'>
+              {weatherData.clouds}%
+            </h3>
+          </div>
+        </div>
+        <div className='prognosis-container'>
+          <div className="day-container">
+            <h2 className="day-text">
+              Tomorrow
+            </h2>
+            {dailyForecast[1] ? (
+              <>
+                <img src={dailyForecast[1].icon} alt="Weather icon"
+                     className="prognosis-icon"/>
+                <h2
+                  className="day-temp">{dailyForecast[1].temperature}{tempText}</h2>
+              </>
+            ) : (
+              <h2>Loading...</h2>
+            )}
+          </div>
+          <div className="day-container">
+            <h2 className='day-text'>
+              2 days
+            </h2>
+            {dailyForecast[2] ? (
+              <>
+                <img src={dailyForecast[2].icon} alt="Weather icon"
+                     className="prognosis-icon"/>
+                <h2
+                  className="day-temp">{dailyForecast[2].temperature}{tempText}</h2>
+              </>
+            ) : (
+              <h2>Loading...</h2>
+            )}
+          </div>
+          <div className='day-container'>
+            <h2 className='day-text'>
+              3 days
+            </h2>
+            {dailyForecast[3] ? (
+              <>
+                <img src={dailyForecast[3].icon} alt="Weather icon"
+                     className="prognosis-icon"/>
+                <h2
+                  className="day-temp">{dailyForecast[3].temperature}{tempText}</h2>
+              </>
+            ) : (
+              <h2>Loading...</h2>
+            )}
+          </div>
+          <div className='day-container'>
+            <h2 className='day-text'>
+              4 days
+            </h2>
+            {dailyForecast[4] ? (
+              <>
+                <img src={dailyForecast[4].icon} alt="Weather icon"
+                     className="prognosis-icon"/>
+                <h2
+                  className="day-temp">{dailyForecast[4].temperature}{tempText}</h2>
+              </>
+            ) : (
+              <h2>Loading...</h2>
+            )}
+          </div>
+        </div>
       </div>
-      <div className='details-container'>
-        <h2 className='details-date'>{currentDate}</h2>
-        <h2 className='details-temp'>{weatherData.temperature}<span>{tempText}</span>
-        </h2>
-        <div className='text-container'>
-          <h3 className='wind-text'>
-            Wind
-          </h3>
-          <h3 className='wind-number'>
-            {weatherData.windSpeed} {windText}
-          </h3>
-        </div>
-        <div className='text-container'>
-          <h3 className='rain-text'>
-            Rain
-          </h3>
-          <h3 className='rain-number'>
-            {weatherData.humidity}% || {weatherData.rain} mm/h
-          </h3>
-        </div>
-        <div className='text-container'>
-          <h3 className='clouds-text'>
-            Clouds
-          </h3>
-          <h3 className='clouds-number'>
-            {weatherData.clouds}%
-          </h3>
-        </div>
-      </div>
-      <div className='prognosis-container'>
-        <div className="day-container">
-          <h2 className="day-text">
-            Tomorrow
-          </h2>
-          {dailyForecast[1] ? (
-            <>
-              <img src={dailyForecast[1].icon} alt="Weather icon" className="prognosis-icon" />
-              <h2 className="day-temp">{dailyForecast[1].temperature}{tempText}</h2>
-            </>
-          ) : (
-            <h2>Loading...</h2>
-          )}
-        </div>
-        <div className="day-container">
-          <h2 className='day-text'>
-            2 days
-          </h2>
-          {dailyForecast[2] ? (
-            <>
-              <img src={dailyForecast[2].icon} alt="Weather icon" className="prognosis-icon" />
-              <h2 className="day-temp">{dailyForecast[2].temperature}{tempText}</h2>
-            </>
-          ) : (
-            <h2>Loading...</h2>
-          )}
-        </div>
-        <div className='day-container'>
-          <h2 className='day-text'>
-            3 days
-          </h2>
-          {dailyForecast[3] ? (
-            <>
-              <img src={dailyForecast[3].icon} alt="Weather icon" className="prognosis-icon" />
-              <h2 className="day-temp">{dailyForecast[3].temperature}{tempText}</h2>
-            </>
-          ) : (
-            <h2>Loading...</h2>
-          )}
-        </div>
-        <div className='day-container'>
-          <h2 className='day-text'>
-            4 days
-          </h2>
-          {dailyForecast[4] ? (
-            <>
-              <img src={dailyForecast[4].icon} alt="Weather icon" className="prognosis-icon" />
-              <h2 className="day-temp">{dailyForecast[4].temperature}{tempText}</h2>
-            </>
-          ) : (
-            <h2>Loading...</h2>
-          )}
-        </div>
-      </div>
-        </div>
     </div>)
 }
 
